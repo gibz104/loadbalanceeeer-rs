@@ -1,12 +1,39 @@
-# syntax=docker/dockerfile:1
+# Use the official Rust image as a base
+FROM rust:latest as builder
 
-FROM python:3
+# Set the working directory
+WORKDIR /usr/src/app
 
-WORKDIR /app
+# Copy the Cargo.toml file
+COPY Cargo.toml ./
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+# Copy the actual source code
+COPY src src
 
-COPY . .
+# Update the dependencies
+RUN cargo update
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+# Build the binary
+RUN cargo build --release
+
+# Use a lightweight base image for the runtime
+FROM debian:stable-slim
+
+# Install necessary runtime dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates libssl-dev netcat && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy the built binary from the builder stage
+COPY --from=builder /usr/src/app/target/release/lb /usr/local/bin/
+
+# Copy the wait-for-tor.sh script from the builder stage
+COPY --from=builder /usr/src/app/src/wait-for-tor.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wait-for-tor.sh
+
+# Expose the WebSocket proxy port
+EXPOSE 9545
+
+# Wait for socks proxy to be available
+CMD ["wait-for-tor.sh", "tor-socks-proxy:9150", "lb"]

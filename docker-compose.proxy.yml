@@ -1,8 +1,0 @@
-services:
-  tor-socks: 
-    image: peterdavehello/tor-socks-proxy:latest
-    ports:
-      - "9150:9150"
-  lb:
-    environment:
-      - PROXY=socks5://tor-socks:9150

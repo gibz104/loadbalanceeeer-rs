@@ -1,0 +1,37 @@
+# Set port and ip address for socks proxy and allow connections from localhost and docker network
+SocksPort 0.0.0.0:9150
+SocksPolicy accept 127.0.0.1
+SocksPolicy accept 172.16.0.0/12
+SocksPolicy reject *
+
+# Set the data directory
+DataDirectory /var/lib/tor
+
+# When set to 1, will run in the background
+RunAsDaemon 0
+
+# Scrubs sensitive logs, like ip addresses, when set to 1
+SafeLogging 1
+
+# Number of seconds before new tor circuit is created
+MaxCircuitDirtiness 600
+
+# Print logs to stdout
+Log notice stdout
+
+# ### Node Restrictions ###
+# Uncomment to restrict exit nodes to specific countries
+# StrictNodes 1
+# ExcludeExitNodes {au}, {ca}, {gb}, {nz}, {us}
+# ExcludeNodes {au}, {ca}, {gb}, {nz}, {us}
+
+# ### Bridges ###
+# Uncomment to enable obfs4 bridges
+# ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+# Bridge obfs4 <IP_ADDRESS>:<PORT> <FINGERPRINT> cert=<CERTIFICATE> iat-mode=0
+
+# ### Control Port ###
+# Uncomment to enable control port (programmatic access to tor)
+# ControlPort 9051
+# ControlListenAddress 127.0.0.1
+# HashedControlPassword <HASHED_PASSWORD>

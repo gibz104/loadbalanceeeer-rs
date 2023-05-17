@@ -1,10 +1,13 @@
-# Loadbalanceeeer
+# Loadbalanceeeer-rs
 
-PoC local JSON-RPC load-balancer with opt-in anonymizer via Tor
+PoC local JSON-RPC load-balancer with anonymizer via Tor.  Built in Rust.
 
 ## Why
 
-Distribute RPC requests across different RPC providers and eventually use a proxy for privacy purposes
+Distribute RPC requests across different RPC providers and use a proxy for privacy purposes. 
+
+This is inspired by, and a fork of, [loadbalanceeeer](https://github.com/emilianobonassi/loadbalanceeeer) ...but written in Rust.  I hope to show others
+that Rust can be quite simple, similar to Python, and much faster.  I'm new to Rust and found this fun to work on.
 
 ## How use it
 
@@ -12,27 +15,15 @@ Distribute RPC requests across different RPC providers and eventually use a prox
 
 - Clone the repo
 
-- Edit `rpc.txt` with your RPCs (currently some public examples from [Ethereum Nodes](https://ethereumnodes.com/))
+- Edit `docker-compose.yml` with your RPCs (currently some public examples from [Ethereum Nodes](https://ethereumnodes.com/))
 
-- For only load balancing, run `docker-compose up -f docker-compose.yml`
-
-- For more privacy, run `docker-compose up -f docker-compose.yml -f docker-compose.proxy.yml`
+- Run `docker-compose up -f docker-compose.yml`
 
 - You get your new RPC at `http://localhost:9545`
 
 ## Architecture
 
-Only Load Balancing
-
-```
-                            => remote_rpc_1
-                           |
-user => (localhost:9545) -     ...
-                           |
-                            => remote_rpc_N
-```
-
-With Anonymizer/Proxy
+Load Balancer with Anonymizer/Proxy
 
 ```
                                          => remote_rpc_1

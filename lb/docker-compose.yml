@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  tor-socks-proxy:
+    image: peterdavehello/tor-socks-proxy:latest
+    container_name: tor-socks-proxy
+    volumes:
+      - ./src/configs/torrc:/etc/tor/torrc
+    ports:
+      - "9150:9150"
+  lb:
+    container_name: lb
+    build: .
+    depends_on:
+      - tor-socks-proxy
+    ports:
+      - "9545:9545"
+    environment:
+        - RPCS=https://cloudflare-eth.com,https://eth.llamarpc.com
